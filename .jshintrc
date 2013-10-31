@@ -1,0 +1,13 @@
+{
+	"node": true,       // NodeJS JavaScript files
+	"strict": true,     // Require "use strict" statement
+	"white": false,     // Check whitespaces between operators
+	"camelcase": false, // Force camelcase for vars
+	"curly": true,      // Require curly braces in every scope
+	"unused": true,     // Do not allow unused vars
+	"funcscope": false, // Do not allow using a var out of its virtual scope
+	"loopfunc": true,   // Allow functions to be declared in loops
+	"quotmark": false,	// Do not warn about mixing ' and "
+	"trailing": true,	// Warn about trailing spaces
+	"undef": true       // Force vars declaration before using them
+}

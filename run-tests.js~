@@ -1,0 +1,2 @@
+var microbenchmark = require('./main.js');
+
