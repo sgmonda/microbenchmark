@@ -1,0 +1,22 @@
+{
+	"name": "microbenchmark",
+	"version": "0.0.1",
+	"description": "Microbenchmarks with NodeJS",
+	"keywords": ["performance", "time", "benchmark", "spec"],
+	"license": "MIT",
+	"main": "main.js",
+	"author": {
+		"name": "Sergio Garcia Mondaray <sgmonda@gmail.com> (http://www.sgmonda.com)"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/sgmonda/microbenchmark"
+	},
+	"engines": {
+		"node": "*"
+	},
+	"readmeFilename": "README.md",
+	"scripts": {
+		"test": "node run-tests.js"
+	}
+}

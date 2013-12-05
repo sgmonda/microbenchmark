@@ -1,0 +1,4 @@
+TODO
+----
+
+- [ ] Paint a simple plot comparing results

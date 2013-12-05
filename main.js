@@ -108,7 +108,7 @@ var compare = function (obj, times) {
 
 	var f, min, code = {};
 	for (f in obj) {
-		code[f] = obj[f].toString();
+		code[f] = obj[f].toString().replace(/\n+/g, '').replace(/\t+/g, ' ');
 		obj[f].timeSpent = run(obj[f], times);
 		if (!min || min.timeSpent > obj[f].timeSpent) {
 			min = obj[f];
@@ -146,22 +146,9 @@ var compare = function (obj, times) {
 	return result;
 };
 
-var t = compare({
-	'parseInt': function() {
-		return parseInt('23.4', 10);
-	},
-	'bitwise': function() {
-		return '23.45' | 0;
-	},
-	'Math.floor': function() {
-		return Math.floor('23.44');
-	}
-}, 1000);
-console.log(t);
-
-
 // EXPORTS =====================================================================
 
 exports.run = run;
+exports.compare = compare;
 exports.time2json = time2json;
 exports.time2string = time2string;

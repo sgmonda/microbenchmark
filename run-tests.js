@@ -91,10 +91,9 @@ var microbenchmark = require('./main.js');
 	];
 
 	tests.forEach(function (t, i) {
-		var got = JSON.stringify(microbenchmark.time2json(t.nanoseconds));
+		var got = JSON.stringify(microbenchmark.time2json([0, t.nanoseconds]));
 		var expected = JSON.stringify(t.expected);
-		console.assert(got === expected, 'time2json test failed:\n' + 'Expected = ' + expected + '\nGot = ' + got + '\n');
+		console.assert(got === expected, 'time2json test "' + t.nanoseconds + '" failed:\n' + 'Expected = ' + expected + '\nGot = ' + got + '\n');
 		console.log('- Test ' + (i + 1) + '/' + tests.length + ' passed ✓');
-		console.log(microbenchmark.time2string(t.nanoseconds));
 	});
 }());
