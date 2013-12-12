@@ -97,3 +97,16 @@ var microbenchmark = require('./main.js');
 		console.log('- Test ' + (i + 1) + '/' + tests.length + ' passed ✓');
 	});
 }());
+
+function task () {
+	return Math.sin(Math.random() * 1000 * Math.log(344));
+}
+
+microbenchmark.compare({
+	'cosa1': function () {
+		task();
+	},
+	'cosa2 mas larga': function () {
+		task(task(task(task(task(task(task(task(task(task(task(task(task(task(task()))))))))))))));
+	}
+})

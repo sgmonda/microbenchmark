@@ -4,6 +4,8 @@
 
 // GLOBALS =====================================================================
 
+var ITERATIONS_PER_TEST = 1000000;
+
 // MAIN LOGIC ==================================================================
 
 /**
@@ -84,66 +86,92 @@ var time2json = function (time) {
 
 	return json;
 };
+var ya = false;
+var buildFunctionStats = function (runs, seconds) {
+
+	var stats = {
+		runsPerSecond: runs / seconds,
+		timePerRun: (seconds / runs) + ' sec',
+		error: ya ? '2.30' : '99.29' // TODO Compute this
+	};
+	ya = true;
+	return stats;
+}
 
 /**
- * Runs a function and times it
+ * Runs a function many times and times it
  * @param {function} f Function to run
- * @param {number} times How many times to run f
  **/
-var run = function (f, times) {
-	times = times || 1;
+var run = function (f) {
+
+	var TEST_TIME_SECONDS = 2;
+	var runs = 0;
 	var time0 = process.hrtime();
-	for (var i = times; i > 0; i--) {
-		f();
-	}
-	var time1 = process.hrtime();
-	return timeDiff(time0, time1);
+	var hrelapsed = null;
+	do {
+
+		runs++;
+		eval('f()'); // to avoid unloop
+		hrelapsed = process.hrtime(time0);
+
+	} while (hrelapsed[0] < TEST_TIME_SECONDS);
+
+	var seconds = hrelapsed[0];
+	var stats = buildFunctionStats(runs, seconds);
+	return stats;
 };
 
 /**
  * Runs two functions and compare the time spent
  * @param {object} obj Map of functions to compare
  **/
-var compare = function (obj, times) {
+var compare = function (obj) {
 
-	var f, min, code = {};
-	for (f in obj) {
-		code[f] = obj[f].toString().replace(/\n+/g, '').replace(/\t+/g, ' ');
-		obj[f].timeSpent = run(obj[f], times);
-		if (!min || min.timeSpent > obj[f].timeSpent) {
-			min = obj[f];
-		}
+	var fname, f, st, stats = {}, tagLength = 0;
+	for (fname in obj) {
+		f = obj[fname];
+		st = run(f);
+		stats[fname] = st;
 	}
-	var time = {}, relative;
-	for (f in obj) {
-		relative = timeDiff(min.timeSpent, obj[f].timeSpent);
-		time[f] = {
-			source: code[f],
-			raw: obj[f].timeSpent,
-			duration: time2string(obj[f].timeSpent),
-		};
-		if (relative[0] || relative[1]) {
-			time[f].relative = '+ ' + time2string(relative);
-			if (relative[0]) {
-				time[f].loss = (relative[0] * 100) / min.timeSpent[0];
-			} else {
-				time[f].loss = (relative[1] * 100) / min.timeSpent[1];
-			}
-			time[f].loss = time[f].loss.toFixed(2) + '%';
+
+	printStats(stats);
+
+	return stats;
+};
+
+var printStats = function (stats) {
+
+	var tagLength = 0, countLength = 0, key, fname;
+	for (fname in stats) {
+		if (fname.length > tagLength) {
+			tagLength = fname.length;
+		}
+		var rps = formatNumber(stats[fname].runsPerSecond);
+		if (rps.length > countLength) {
+			countLength = rps.length;
 		}
 	}
 
-	// Sort json
-	var result = [];
-	for (f in time) {
-		time[f].name = f;
-		result.push(time[f]);
+	for (fname in stats) {
+		var tag = (fname + new Array(tagLength).join(' ')).slice(0, tagLength);
+		var runs = (new Array(countLength).join(' ') + formatNumber(stats[fname].runsPerSecond)).slice(-1 * countLength);
+		var err = ('   ' + stats[fname].error).slice(-6);
+		console.log(tag + ' x ' + runs + ' ops/sec ±' + err + '%');
 	}
-	result.sort(function(a, b) {
-		return a.raw.join('') > b.raw.join('');
-	});
-	
-	return result;
+};
+
+var formatNumber = function(str) {
+	str = str | 0;
+	var amount = new String(str);
+    amount = amount.split("").reverse();
+
+    var output = "";
+    for ( var i = 0; i <= amount.length-1; i++ ){
+        output = amount[i] + output;
+        if ((i+1) % 3 == 0 && (amount.length-1) !== i)output = ',' + output;
+    }
+    return output;
+
 };
 
 // EXPORTS =====================================================================
